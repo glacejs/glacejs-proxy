@@ -1,6 +1,6 @@
 {
   "name": "glace-proxy",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "GlaceJS proxy is interactive nodejs application to launch http and global proxy in order to capture server responses and manage them",
   "main": "lib/index.js",
   "scripts": {},
@@ -8,7 +8,7 @@
     "type": "git",
     "url": "git+https://github.com/glacejs/glace-proxy.git"
   },
-  "author": "Sergei Chipiga",
+  "author": "Sergei Chipiga <chipiga86@gmail.com>",
   "license": "MIT",
   "bin": {
     "glace-proxy": "./bin/glace-proxy"
