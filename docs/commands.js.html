@@ -111,6 +111,7 @@
  * @arg {boolean} [opts.colored=false] - Flag to use ANSI color in log message.
  * @arg {object} [opts.GlobalProxy] - Global proxy class.
  * @arg {object} [opts.HttpProxy] - HTTP proxy class.
+ * @arg {object} [opts.isRunning] - Function to detect is process launched.
  */
 
 var fs = require("fs");
@@ -141,12 +142,13 @@ var Commands = function (config, opts) {
     this._log = U.defVal(opts.logger, LOG.info.bind(LOG));
     this._coloredLog = U.defVal(opts.colored, false);
 
-    this.__GlobalProxy = U.defVal(opts.GlobalProxy, GlobalProxy);
-    this.__HttpProxy = U.defVal(opts.HttpProxy, HttpProxy);
-
     this._chrome = null;
     this._httpProxy = null;
     this._globalProxy = null;
+
+    this.__GlobalProxy = U.defVal(opts.GlobalProxy, GlobalProxy);
+    this.__HttpProxy = U.defVal(opts.HttpProxy, HttpProxy);
+    this.__isRunning = U.defVal(opts.isRunning, isRunning);
 };
 module.exports = Commands;
 /**
@@ -158,7 +160,7 @@ module.exports = Commands;
  */
 Commands.prototype.setProxiedUrl = async function (proxiedUrl) {
     this._config.web.url = proxiedUrl;
-    if (this._httpProxy &amp;&amp; this._httpProxy.isRunning) {
+    if (this._isHttpProxyLaunched()) {
         this._httpProxy.setUrl(proxiedUrl);
     };
     if (this._isChromeLaunched()) return await this.restartChrome();
@@ -176,7 +178,7 @@ Commands.prototype.setProxiedUrl = async function (proxiedUrl) {
  */
 Commands.prototype.launchHttpProxy = async function () {
 
-    if (this._httpProxy &amp;&amp; this._httpProxy.isRunning) {
+    if (this._isHttpProxyLaunched()) {
         var msg = "HTTP proxy is launched already";
         if (this._coloredLog) msg = msg.red;
         this._log(msg);
@@ -227,7 +229,7 @@ Commands.prototype.launchHttpProxy = async function () {
  */
 Commands.prototype.stopHttpProxy = async function () {
 
-    if (!(this._httpProxy &amp;&amp; this._httpProxy.isRunning)) {
+    if (!this._isHttpProxyLaunched()) {
         var msg = "HTTP proxy isn't launched yet";
         if (this._coloredLog) msg = msg.red;
         this._log(msg);
@@ -261,7 +263,7 @@ Commands.prototype.restartHttpProxy = function() {
  */
 Commands.prototype.launchGlobalProxy = function () {
 
-    if (this._globalProxy &amp;&amp; this._globalProxy.isRunning) {
+    if (this._isGlobalProxyLaunched()) {
         var msg = "Global transparent proxy is launched already";
         if (this._coloredLog) msg = msg.red;
         this._log(msg);
@@ -308,7 +310,7 @@ Commands.prototype.launchGlobalProxy = function () {
  */
 Commands.prototype.stopGlobalProxy = async function () {
 
-    if (!(this._globalProxy &amp;&amp; this._globalProxy.isRunning)) {
+    if (!this._isGlobalProxyLaunched()) {
         var msg = "Global transparent proxy isn't launched yet";
         if (this._coloredLog) msg = msg.red;
         this._log(msg);
@@ -361,7 +363,7 @@ Commands.prototype.launchChrome = async function () {
         chromeFlags.push("--incognito");
     };
 
-    if (this._globalProxy &amp;&amp; this._globalProxy.isRunning) {
+    if (this._isGlobalProxyLaunched()) {
         chromeFlags = chromeFlags.concat([
             "--ignore-certificate-errors",
             `--proxy-server=${U.hostname}:${this._config.proxy.globalPort}`,
@@ -534,8 +536,8 @@ Commands.prototype.clearProxyCache = async function () {
  * @return {boolean} - `true` if proxy exists and launched, `false` otherwise.
  */
 Commands.prototype._checkProxy = function () {
-    if ((this._httpProxy &amp;&amp; this._httpProxy.isRunning) ||
-        (this._globalProxy &amp;&amp; this._globalProxy.isRunning)) return true;
+    if ((this._isHttpProxyLaunched()) ||
+        (this._isGlobalProxyLaunched())) return true;
     var msg = "No one of http or global proxy isn't launched yet";
     if (this._coloredLog) msg = msg.red;
     this._log(msg);
@@ -546,9 +548,10 @@ Commands.prototype._checkProxy = function () {
  *
  * @method
  * @protected
+ * @return {boolean}
  */
 Commands.prototype._isChromeLaunched = function () {
-    return this._chrome &amp;&amp; isRunning(this._chrome.pid);
+    return !!(this._chrome &amp;&amp; this.__isRunning(this._chrome.pid));
 };
 /**
  * Helper to get URL to open in chrome browser. If HTTP proxy is launched,
@@ -565,6 +568,26 @@ Commands.prototype._chromeUrl = function () {
     } else {
         return this._config.web.url;
     };
+};
+/**
+ * Helper to define whether http proxy is running.
+ *
+ * @method
+ * @protected
+ * @return {boolean}
+ */
+Commands.prototype._isHttpProxyLaunched = function () {
+    return !!(this._httpProxy &amp;&amp; this._httpProxy.isRunning);
+};
+/**
+ * Helper to define whether global proxy is running.
+ *
+ * @method
+ * @protected
+ * @return {boolean}
+ */
+Commands.prototype._isGlobalProxyLaunched = function () {
+    return !!(this._globalProxy &amp;&amp; this._globalProxy.isRunning);
 };
 </pre>
     </article>
@@ -611,7 +634,7 @@ Commands.prototype._chromeUrl = function () {
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
 	
-		on 2017-12-09T17:45:36+02:00
+		on 2017-12-13T22:04:25+02:00
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>
