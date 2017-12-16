@@ -244,7 +244,7 @@ scope("commands", () => {
             chunk("in incognito mode if flag is set", async () => {
                 CONF.chrome.incognito = true;
                 expect(await cmd.launchChrome()).to.be.true;
-                expect(launchOpts.chromeFlags).to.include("--incognito");
+                expect(launchOpts.chromeFlags).to.include("incognito");
             });
 
             chunk("with global proxy options if it's started", async () => {
@@ -252,7 +252,13 @@ scope("commands", () => {
                 cmd._isGlobalProxyLaunched = () => true;
                 expect(await cmd.launchChrome()).to.be.true;
                 expect(launchOpts.chromeFlags).to.include(
-                    `--proxy-server=${U.hostname}:3333`);
+                    `proxy-server=${U.hostname}:3333`);
+            });
+
+            chunk("with custom option", async () => {
+                expect(await cmd.launchChrome(
+                    { chromeOpts: [ "my-option" ] })).to.be.true;
+                expect(launchOpts.chromeFlags).to.include("my-option");
             });
         });
     });
