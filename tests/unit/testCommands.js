@@ -1,6 +1,6 @@
 "use strict";
 
-var sinon = require("sinon");
+var U = require("glace-utils");
 
 var Commands = require("../../lib/commands");
 var CONF = require("../../lib/config");
@@ -211,6 +211,177 @@ scope("commands", () => {
 
             expect(cmd.stopGlobalProxy.calledOnce).to.be.true;
             expect(cmd.launchGlobalProxy.calledOnce).to.be.true;
+        });
+    });
+
+    test(".launchChrome()", () => {
+
+        chunk("skipped if chrome is launched already", async () => {
+            cmd._isChromeLaunched = () => true;
+            expect(await cmd.launchChrome()).to.be.false;
+        });
+
+        scope("launches chrome", () => {
+            var launchOpts;
+
+            beforeChunk(() => {
+                cmd._chromeUrl = sinon.stub();
+                cmd.__chromeLauncher = {
+                    launch: opts => {
+                        launchOpts = opts;
+                        return Promise.resolve({ pid: 1, port: 2 });
+                    },
+                };
+            });
+
+            chunk("only", async () => {
+                expect(await cmd.launchChrome()).to.be.true;
+                expect(cmd._chromeUrl.calledOnce).to.be.true;
+                expect(cmd._chrome.pid).to.be.equal(1);
+                expect(cmd._chrome.port).to.be.equal(2);
+            });
+
+            chunk("in incognito mode if flag is set", async () => {
+                CONF.chrome.incognito = true;
+                expect(await cmd.launchChrome()).to.be.true;
+                expect(launchOpts.chromeFlags).to.include("--incognito");
+            });
+
+            chunk("with global proxy options if it's started", async () => {
+                CONF.proxy.globalPort = 3333
+                cmd._isGlobalProxyLaunched = () => true;
+                expect(await cmd.launchChrome()).to.be.true;
+                expect(launchOpts.chromeFlags).to.include(
+                    `--proxy-server=${U.hostname}:3333`);
+            });
+        });
+    });
+
+    test(".closeChrome()", () => {
+
+        chunk("skipped if chrome is closed already", async () => {
+            cmd._isChromeLaunched = sinon.stub().returns(false);
+            expect(await cmd.closeChrome()).to.be.false;
+            expect(cmd._isChromeLaunched.calledOnce).to.be.true;
+        });
+
+        chunk("closes chrome", async () => {
+            cmd._isChromeLaunched = sinon.stub().returns(true);
+            var chrome = cmd._chrome = { kill: sinon.spy() };
+            expect(await cmd.closeChrome()).to.be.true;
+            expect(cmd._isChromeLaunched.calledOnce).to.be.true;
+            expect(cmd._chrome).to.not.exist;
+            expect(chrome.kill.calledOnce).to.be.true;
+        });
+    });
+
+    test(".restartChrome()", () => {
+        chunk("restarts chrome", async () => {
+            cmd.launchChrome = sinon.stub().returns(Promise.resolve());
+            cmd.closeChrome = sinon.stub().returns(Promise.resolve());
+            await cmd.restartChrome();
+
+            expect(cmd.launchChrome.calledOnce).to.be.true;
+            expect(cmd.closeChrome.calledOnce).to.be.true;
+        });
+    });
+
+    test(".setProxySpeed()", () => {
+
+        chunk("skipped if not proxy is launched", async () => {
+            cmd._checkProxy = sinon.stub().returns(false);
+            expect(await cmd.setProxySpeed(10)).to.be.false;
+            expect(cmd._checkProxy.calledOnce).to.be.true;
+        });
+
+        chunk("sets proxy speed", async () => {
+            cmd._checkProxy = sinon.stub().returns(true);
+            cmd._httpProxy = { setSpeed: sinon.spy() };
+            cmd._globalProxy = { setSpeed: sinon.spy() };
+
+            expect(await cmd.setProxySpeed(10)).to.be.true;
+            expect(cmd._checkProxy.calledOnce).to.be.true;
+            expect(cmd._httpProxy.setSpeed.calledOnce).to.be.true;
+            expect(cmd._httpProxy.setSpeed.args[0][0]).to.be.equal(10);
+            expect(cmd._globalProxy.setSpeed.calledOnce).to.be.true;
+            expect(cmd._globalProxy.setSpeed.args[0][0]).to.be.equal(10);
+        });
+    });
+
+    test(".resetProxySpeed()", () => {
+
+        chunk("skipped if not proxy is launched", async () => {
+            cmd._checkProxy = sinon.stub().returns(false);
+            expect(await cmd.resetProxySpeed()).to.be.false;
+            expect(cmd._checkProxy.calledOnce).to.be.true;
+        });
+
+        chunk("resets proxy speed", async () => {
+            cmd._checkProxy = sinon.stub().returns(true);
+            cmd._httpProxy = { resetSpeed: sinon.spy() };
+            cmd._globalProxy = { resetSpeed: sinon.spy() };
+
+            expect(await cmd.resetProxySpeed()).to.be.true;
+            expect(cmd._checkProxy.calledOnce).to.be.true;
+            expect(cmd._httpProxy.resetSpeed.calledOnce).to.be.true;
+            expect(cmd._globalProxy.resetSpeed.calledOnce).to.be.true;
+        });
+    });
+
+    test(".enableProxyCache()", () => {
+
+        chunk("skipped if not proxy is launched", async () => {
+            cmd._checkProxy = sinon.stub().returns(false);
+            expect(await cmd.enableProxyCache()).to.be.false;
+            expect(cmd._checkProxy.calledOnce).to.be.true;
+        });
+
+        chunk("enables proxy cache", async () => {
+            cmd._checkProxy = sinon.stub().returns(true);
+            cmd._httpProxy = {};
+            cmd._globalProxy = {};
+
+            expect(await cmd.enableProxyCache()).to.be.true;
+            expect(cmd._checkProxy.calledOnce).to.be.true;
+            expect(cmd._httpProxy.useCache).to.be.true;
+            expect(cmd._globalProxy.useCache).to.be.true;
+        });
+    });
+
+    test(".disableProxyCache()", () => {
+
+        chunk("skipped if not proxy is launched", async () => {
+            cmd._checkProxy = sinon.stub().returns(false);
+            expect(await cmd.disableProxyCache()).to.be.false;
+            expect(cmd._checkProxy.calledOnce).to.be.true;
+        });
+
+        chunk("disables proxy cache", async () => {
+            cmd._checkProxy = sinon.stub().returns(true);
+            cmd._httpProxy = {};
+            cmd._globalProxy = {};
+
+            expect(await cmd.disableProxyCache()).to.be.true;
+            expect(cmd._checkProxy.calledOnce).to.be.true;
+            expect(cmd._httpProxy.useCache).to.be.false;
+            expect(cmd._globalProxy.useCache).to.be.false;
+        });
+    });
+
+    test(".clearProxyCache()", () => {
+
+        chunk("clears cache", async () => {
+            cmd.__fs = { existsSync: sinon.stub().returns(true) };
+            cmd.__fse = { removeSync: sinon.spy() };
+            cmd.__cache = { init: sinon.spy() };
+            CONF.cache.folder = "/path/to/cache";
+
+            expect(await cmd.clearProxyCache()).to.be.true;
+            expect(cmd.__fs.existsSync.calledOnce).to.be.true;
+            expect(cmd.__fse.removeSync.calledOnce).to.be.true;
+            expect(cmd.__fse.removeSync.args[0][0]).to.be.equal("/path/to/cache");
+            expect(cmd.__cache.init.calledOnce).to.be.true;
+            expect(cmd.__cache.init.args[0][0].force).to.be.true;
         });
     });
 
