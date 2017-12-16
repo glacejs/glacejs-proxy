@@ -20,7 +20,7 @@ gulp.task("rm-docs", () => {
 gulp.task("test-unit", () => {
 
     var res = spawn.sync(
-        "./node_modules/glace-core/bin/glace",
+        "./tests/run",
         [
             "tests/unit",
         ],
@@ -38,7 +38,7 @@ gulp.task("test-unit", () => {
 gulp.task("test-e2e", () => {
 
     var res = spawn.sync(
-        "./node_modules/glace-core/bin/glace",
+        "./tests/run",
         [
             "tests/e2e",
         ],

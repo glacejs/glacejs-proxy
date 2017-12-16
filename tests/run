@@ -1,0 +1,6 @@
+#!/usr/bin/env node
+
+var path = require("path");
+var glace = require("glace-core");
+glace.plugins.register(path.resolve(__dirname, "..", "lib"));
+glace.run(process.exit);
