@@ -52,9 +52,21 @@ test("http proxy", () => {
         expect(await cmd.stopHttpProxy()).to.be.true;
     });
 
+    chunk("changes chrome url", async () => {
+        expect(cmd._chromeUrl()).to.be.equal(CONF.web.url);
+        expect(await cmd.launchHttpProxy()).to.be.true;
+        expect(cmd._chromeUrl()).to.not.be.equal(CONF.web.url);
+    });
+
     chunk("is launched with chrome restart", async () => {
         expect(await cmd.launchChrome()).to.be.true;
         expect(await cmd.launchHttpProxy()).to.be.true;
+    });
+
+    chunk("is stopped with chrome restart", async () => {
+        expect(await cmd.launchHttpProxy()).to.be.true;
+        expect(await cmd.launchChrome()).to.be.true;
+        expect(await cmd.stopHttpProxy()).to.be.true;
     });
 
     chunk("can't be launched if it's already", async () => {
@@ -95,6 +107,12 @@ test("global proxy", () => {
     chunk("is launched with chrome restart", async () => {
         expect(await cmd.launchChrome()).to.be.true;
         expect(await cmd.launchGlobalProxy()).to.be.true;
+    });
+
+    chunk("is stopped with chrome restart", async () => {
+        expect(await cmd.launchGlobalProxy()).to.be.true;
+        expect(await cmd.launchChrome()).to.be.true;
+        expect(await cmd.stopGlobalProxy()).to.be.true;
     });
 
     chunk("can't be launched if it's already", async () => {

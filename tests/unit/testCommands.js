@@ -111,6 +111,34 @@ scope("commands", () => {
             expect(cmd._httpProxy.stop.calledOnce).to.be.true;
         });
 
+        chunk("stops http proxy with chrome restart", async () => {
+            cmd._httpProxy = {
+                isRunning: true,
+                stop: sinon.spy(),
+            };
+
+            cmd._isChromeLaunched = () => true;
+            cmd.restartChrome = sinon.spy();
+
+            expect(await cmd.stopHttpProxy()).to.be.true;
+            expect(cmd._httpProxy.stop.calledOnce).to.be.true;
+            expect(cmd.restartChrome.calledOnce).to.be.true;
+        });
+
+        chunk("stops http proxy without chrome restart if flag is set", async () => {
+            cmd._httpProxy = {
+                isRunning: true,
+                stop: sinon.spy(),
+            };
+
+            cmd._isChromeLaunched = () => true;
+            cmd.restartChrome = sinon.spy();
+
+            expect(await cmd.stopHttpProxy({ restartChrome: false })).to.be.true;
+            expect(cmd._httpProxy.stop.calledOnce).to.be.true;
+            expect(cmd.restartChrome.called).to.be.false;
+        });
+
         chunk("is skipped if http proxy isn't launched", async () => {
             expect(await cmd.stopHttpProxy()).to.be.false;
         });
@@ -124,6 +152,7 @@ scope("commands", () => {
             await cmd.restartHttpProxy();
 
             expect(cmd.stopHttpProxy.calledOnce).to.be.true;
+            expect(cmd.stopHttpProxy.args[0][0].restartChrome).to.be.false;
             expect(cmd.launchHttpProxy.calledOnce).to.be.true;
         });
     });
@@ -197,6 +226,34 @@ scope("commands", () => {
             expect(cmd._globalProxy.stop.calledOnce).to.be.true;
         });
 
+        chunk("stops global proxy with chrome restart", async () => {
+            cmd._globalProxy = {
+                isRunning: true,
+                stop: sinon.spy(),
+            };
+
+            cmd._isChromeLaunched = () => true;
+            cmd.restartChrome = sinon.spy();
+
+            expect(await cmd.stopGlobalProxy()).to.be.true;
+            expect(cmd._globalProxy.stop.calledOnce).to.be.true;
+            expect(cmd.restartChrome.calledOnce).to.be.true;
+        });
+
+        chunk("stops global proxy without chrome restart if flag is set", async () => {
+            cmd._globalProxy = {
+                isRunning: true,
+                stop: sinon.spy(),
+            };
+
+            cmd._isChromeLaunched = () => true;
+            cmd.restartChrome = sinon.spy();
+
+            expect(await cmd.stopGlobalProxy({ restartChrome: false })).to.be.true;
+            expect(cmd._globalProxy.stop.calledOnce).to.be.true;
+            expect(cmd.restartChrome.called).to.be.false;
+        });
+
         chunk("is skipped if global proxy isn't launched", async () => {
             expect(await cmd.stopGlobalProxy()).to.be.false;
         });
@@ -210,6 +267,7 @@ scope("commands", () => {
             await cmd.restartGlobalProxy();
 
             expect(cmd.stopGlobalProxy.calledOnce).to.be.true;
+            expect(cmd.stopGlobalProxy.args[0][0].restartChrome).to.be.false;
             expect(cmd.launchGlobalProxy.calledOnce).to.be.true;
         });
     });
