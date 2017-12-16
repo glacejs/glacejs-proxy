@@ -2,8 +2,8 @@
 
 var U = require("glace-utils");
 
-var Commands = require("../../lib/commands");
-var CONF = require("../../lib/config");
+var Commands = require("../../lib").Commands;
+var CONF = require("../../lib").config;
 
 scope("commands", () => {
     var cmd;

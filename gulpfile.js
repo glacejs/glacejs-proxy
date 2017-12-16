@@ -18,19 +18,37 @@ gulp.task("rm-docs", () => {
 });
 
 gulp.task("test-unit", () => {
-    
-        var res = spawn.sync(
-            "./node_modules/glace-core/bin/glace",
-            [
-                "tests/unit",
-            ],
-            { stdio: "inherit" });
-    
-        if (res.error) {
-            console.log(res.error);
-            process.exit(1);
-        };
-        if (res.status) {
-            process.exit(res.status);
-        };
-    });
+
+    var res = spawn.sync(
+        "./node_modules/glace-core/bin/glace",
+        [
+            "tests/unit",
+        ],
+        { stdio: "inherit" });
+
+    if (res.error) {
+        console.log(res.error);
+        process.exit(1);
+    };
+    if (res.status) {
+        process.exit(res.status);
+    };
+});
+
+gulp.task("test-e2e", () => {
+
+    var res = spawn.sync(
+        "./node_modules/glace-core/bin/glace",
+        [
+            "tests/e2e",
+        ],
+        { stdio: "inherit" });
+
+    if (res.error) {
+        console.log(res.error);
+        process.exit(1);
+    };
+    if (res.status) {
+        process.exit(res.status);
+    };
+});
