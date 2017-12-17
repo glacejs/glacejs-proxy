@@ -69,7 +69,7 @@ glace-proxy
 **Configuration:**
 
 - `-c, --config [config-path]` - Path to JSON file with CLI arguments. Default is `cwd/config.json` (if it exists).
-- `--url <URL>` - Proxied URL for HTTP proxy. Required if HTTP proxy is used.
+- `--web-url <URL>` - Proxied URL for HTTP proxy. Required if HTTP proxy is used.
 
 (**Note!** All options below are may be used in `config.json`, see section **Quick Start**.)
 
