@@ -3,7 +3,22 @@
   "version": "1.2.9",
   "description": "GlaceJS proxy is interactive nodejs application to launch http and global proxy in order to capture server responses and manage them",
   "main": "lib/index.js",
-  "scripts": {},
+  "scripts": {
+    "ci": "npm run lint && npm run test:unit",
+    "docs": "rm -rf docs && jsdoc -c jsdoc.json -d docs",
+    "docs:publish": "npm run docs && git add docs && git commit -m \"update docs\" && git push origin master",
+    "lint": "eslint lib tests",
+    "lint:fix": "npm run lint -- --fix",
+    "test": "npm run lint && npm run test:unit && npm run test:e2e",
+    "test:unit": "nyc ./tests/run tests/unit",
+    "test:cover": "nyc --reporter=lcov ./tests/run tests/unit",
+    "test:commit": "./tests/run tests/unit",
+    "test:e2e": "./tests/run tests/e2e"
+  },
+  "pre-commit": [
+    "lint",
+    "test:commit"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/glacejs/glace-proxy.git"
@@ -18,29 +33,30 @@
   },
   "homepage": "https://glacejs.github.io/glace-proxy",
   "dependencies": {
-    "cache-manager": "^2.6.0",
+    "cache-manager": "^2.8.0",
     "cache-manager-fs": "^1.0.6",
     "chai": "^4.1.2",
     "chrome-launcher": "^0.10.2",
-    "colors": "^1.1.2",
-    "express": "^4.16.2",
+    "colors": "^1.2.1",
+    "express": "^4.16.3",
     "fs-extra": "^5.0.0",
-    "glace-utils": "^1.0.7",
-    "http-mitm-proxy": "^0.6.0",
+    "glace-utils": "^1.1.7",
+    "http-mitm-proxy": "^0.6.1",
     "http-proxy": "^1.16.2",
     "is-running": "^2.1.0",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.5",
     "temp": "^0.8.3",
     "vorpal": "^1.12.0",
-    "yargs": "^10.1.1"
+    "yargs": "^10.1.2"
   },
   "devDependencies": {
-    "glace-core": "^1.1.5",
-    "gulp": "^3.9.1",
-    "gulp-clean": "^0.3.2",
+    "eslint": "^4.19.1",
+    "glace-core": "^1.3.9",
     "ink-docstrap": "^1.3.0",
     "jsdoc": "^3.5.5",
-    "jsdoc-strip-async-await": "^0.1.0"
+    "jsdoc-strip-async-await": "^0.1.0",
+    "nyc": "^11.6.0",
+    "pre-commit": "^1.2.2"
   },
   "engines": {
     "node": ">= 8.9",

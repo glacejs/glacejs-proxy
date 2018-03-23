@@ -71,7 +71,7 @@ scope("speed middleware", () => {
             await req.emit("data");
             expect(emit.calledOnce).to.be.false;
             expect(promisify.called).to.be.false;
-        })
+        });
 
         chunk("just emit origin req event if not data or end event", async () => {
             await req.emit("test");

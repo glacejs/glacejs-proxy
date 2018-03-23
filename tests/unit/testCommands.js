@@ -10,8 +10,8 @@ scope("commands", () => {
     
     beforeChunk(() => {
         cmd = new Commands(CONF, { logger: () => {},
-                                   isRunning: sinon.stub(),
-                                  });
+            isRunning: sinon.stub(),
+        });
     });
 
     test(".setProxiedUrl()", () => {
@@ -25,7 +25,7 @@ scope("commands", () => {
 
         chunk("updates url in http proxy if it's running", async () => {
             cmd._httpProxy = { isRunning: true,
-                                 setUrl: sinon.spy() };
+                setUrl: sinon.spy() };
             expect(await cmd.setProxiedUrl()).to.be.true;
             expect(cmd._httpProxy.setUrl.calledOnce).to.be.true;
         });
@@ -306,7 +306,7 @@ scope("commands", () => {
             });
 
             chunk("with global proxy options if it's started", async () => {
-                CONF.proxy.globalPort = 3333
+                CONF.proxy.globalPort = 3333;
                 cmd._isGlobalProxyLaunched = () => true;
                 expect(await cmd.launchChrome()).to.be.true;
                 expect(launchOpts.chromeFlags).to.include(

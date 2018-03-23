@@ -37,12 +37,12 @@ scope("HttpProxy", () => {
                 _reconnect: 1,
                 socket: { destroyed: false },
             };
-            httpProxy.__onError('err', req, 'res');
+            httpProxy.__onError("err", req, "res");
             expect(req._reconnect).to.be.equal(0);
             expect(LOG.warn.calledOnce).to.be.true;
             expect(httpProxy._proxy.web.calledOnce).to.be.true;
 
-            var args = httpProxy._proxy.web.args[0]
+            var args = httpProxy._proxy.web.args[0];
             expect(args[0]).to.be.equal(req);
             expect(args[1]).to.be.equal("res");
             expect(args[2]).to.be.equal("proxyOptions");
@@ -53,7 +53,7 @@ scope("HttpProxy", () => {
                 _reconnect: 0,
                 socket: { destroyed: false },
             };
-            httpProxy.__onError('err', req, 'res');
+            httpProxy.__onError("err", req, "res");
             expect(httpProxy._proxy.web.called).to.be.false;
             expect(LOG.error.calledOnce).to.be.true;
         });
@@ -63,7 +63,7 @@ scope("HttpProxy", () => {
                 _reconnect: 1,
                 socket: { destroyed: true },
             };
-            httpProxy.__onError('err', req, 'res');
+            httpProxy.__onError("err", req, "res");
             expect(httpProxy._proxy.web.called).to.be.false;
             expect(req._reconnect).to.be.equal(1);
             expect(LOG.error.calledOnce).to.be.true;

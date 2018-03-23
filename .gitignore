@@ -3,3 +3,4 @@ node_modules
 .http-mitm-proxy
 .proxy-cache
 config.json
+.nyc_output
