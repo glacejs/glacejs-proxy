@@ -13,7 +13,8 @@
     "test:unit": "nyc ./tests/run tests/unit",
     "test:cover": "nyc --reporter=lcov ./tests/run tests/unit",
     "test:commit": "./tests/run tests/unit",
-    "test:e2e": "./tests/run tests/e2e"
+    "test:e2e": "./tests/run ./tests/e2e --root-conftest ./tests/e2e.conftest.js --gen-steps-file ./tests/e2e.steps.yaml --gen-steps-uniq 2 --gen-limit-steps 10",
+    "test:e2e-gen": "npm run test:e2e -- --gen-tests-only"
   },
   "pre-commit": [
     "lint",
@@ -33,7 +34,7 @@
   },
   "homepage": "https://glacejs.github.io/glace-proxy",
   "dependencies": {
-    "cache-manager": "^2.8.0",
+    "cache-manager": "^2.9.0",
     "cache-manager-fs": "^1.0.6",
     "chai": "^4.1.2",
     "chrome-launcher": "^0.10.2",
@@ -51,7 +52,8 @@
   },
   "devDependencies": {
     "eslint": "^4.19.1",
-    "glace-core": "^1.3.9",
+    "glace-core": "^1.4.0",
+    "glace-testgen": "0.0.8",
     "ink-docstrap": "^1.3.0",
     "jsdoc": "^3.5.5",
     "jsdoc-strip-async-await": "^0.1.0",

@@ -1,0 +1,107 @@
+-
+  name: launch_chrome
+  incomplete:
+    - chrome
+  income:
+    chrome: false
+  outcome:
+    chrome: true
+-
+  name: close_chrome
+  complete:
+    - chrome
+  income:
+    chrome: true
+  outcome:
+    chrome: false
+-
+  name: restart_chrome
+  income:
+    chrome: true
+  outcome:
+    chrome: true
+-
+  name: launch_global_proxy
+  incomplete:
+    - global proxy
+  income:
+    global proxy: false
+  outcome:
+    global proxy: true
+-
+  name: stop_global_proxy
+  complete:
+    - global proxy
+  income:
+    global proxy: true
+  outcome:
+    global proxy: false
+-
+  name: restart_global_proxy
+  income:
+    global proxy: true
+  outcome:
+    global proxy: true
+-
+  name: launch_http_proxy
+  incomplete:
+    - http proxy
+  income:
+    http proxy: false
+  outcome:
+    http proxy: true
+-
+  name: stop_http_proxy
+  complete:
+    - http proxy
+  income:
+    http proxy: true
+  outcome:
+    http proxy: false
+-
+  name: restart_http_proxy
+  income:
+    http proxy: true
+  outcome:
+    http proxy: true
+-
+  name: set_proxied_url
+  income: null
+  outcome:
+    proxied url: true
+-
+  name: set_proxy_speed
+  income:
+    http proxy: true
+    global proxy: true
+  outcome:
+    proxy speed: true
+-
+  name: reset_proxy_speed
+  income:
+    http proxy: true
+    global proxy: true
+    proxy speed: true
+  outcome:
+    proxy speed: false
+-
+  name: enable_proxy_cache
+  income:
+    http proxy: true
+    global proxy: true
+  outcome:
+    proxy cache: true
+-
+  name: disable_proxy_cache
+  income:
+    http proxy: true
+    global proxy: true
+    proxy cache: true
+  outcome:
+    proxy cache: false
+-
+  name: clear_proxy_cache
+  income:
+    http proxy: true
+    global proxy: true
+    proxy cache: true
