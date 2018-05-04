@@ -21,6 +21,7 @@ module.exports = {
         "fxVideo": true,
         "fxKillWebdriver": true,
         "fxBrowser": true,
+        "allure": true,
         "fxSelenium": true
     },
     "extends": "eslint:recommended",
