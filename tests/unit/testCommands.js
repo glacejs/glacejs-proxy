@@ -183,6 +183,7 @@ scope("commands", () => {
             cmd.__GlobalProxy = function (opts) {
                 proxyOpts = opts;
                 this.start = () => Promise.resolve();
+                this.getPort = () => 1;
             };
 
             expect(await cmd.launchGlobalProxy()).to.be.true;
@@ -198,6 +199,7 @@ scope("commands", () => {
         chunk("starts existing global proxy instance", async () => {
             cmd._globalProxy = {
                 start: () => Promise.resolve(),
+                getPort: () => 1,
             };
 
             expect(await cmd.launchGlobalProxy()).to.be.true;
@@ -206,6 +208,7 @@ scope("commands", () => {
         chunk("restarts chrome browser", async () => {
             cmd.__GlobalProxy = function () {
                 this.start = () => Promise.resolve();
+                this.getPort = () => 1;
             };
             cmd._isChromeLaunched = () => true;
             cmd.restartChrome = sinon.spy();
@@ -306,7 +309,7 @@ scope("commands", () => {
             });
 
             chunk("with global proxy options if it's started", async () => {
-                CONF.proxy.globalPort = 3333;
+                cmd._globalProxy = { getPort: () => 3333 };
                 cmd._isGlobalProxyLaunched = () => true;
                 expect(await cmd.launchChrome()).to.be.true;
                 expect(launchOpts.chromeFlags).to.include(

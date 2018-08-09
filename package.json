@@ -48,6 +48,7 @@
     "colors": "^1.3.0",
     "express": "^4.16.3",
     "fs-extra": "^5.0.0",
+    "get-port": "^4.0.0",
     "glace-utils": "^1.2.8",
     "http-mitm-proxy": "^0.6.1",
     "http-proxy": "^1.17.0",
