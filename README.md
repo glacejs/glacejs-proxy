@@ -141,13 +141,13 @@ As [GlaceJS](https://glacejs.github.io/glace-core/) framework plugin it will be 
 ### Plugin CLI
 
 - `--http-proxy` - Use http proxy.
-- `--http-proxy-port` - Port for http proxy. Default is random.
+- `--http-proxy-port` - Port for http proxy. Default is random. **Incompatible with `--slaves` option**.
 - `--global-proxy` - Use transparent global proxy. Chromium browsers only.
-- `--global-proxy-port` - Port for transparent global proxy. Default is 8888.
+- `--global-proxy-port` - Port for transparent global proxy. Default is random. **Incompatible with `--slaves` option**.
 - `--install-certificate` - Install global proxy certificate as trusted. Requires administrator permissions.
 - `--cache` - Enable middleware to cache proxy responses to disk.
 - `--existing-cache` - Use existing cache if it exists.
-- `--reconnect` - Number of proxy reconnects on request error. Default is 1.
+- `--reconnect` - Number of proxy reconnects on request error. Default is `1`.
 
 ### Plugin API
 

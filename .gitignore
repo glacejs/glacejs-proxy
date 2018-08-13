@@ -1,7 +1,7 @@
 node_modules
 *.log
-.http-mitm-proxy
-.proxy-cache
 config.json
 .nyc_output
 report
+.certificates
+.proxy-cache
